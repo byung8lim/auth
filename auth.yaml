@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: auth
+  name: auth
+  namespace: fitness
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: auth
+    spec:
+      containers:
+      - image: kube-01.bd.com:5000/fitness/auth:0.1
+        name: auth
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources: {}
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: auth
+    release: fitness
+  name: auth
+  namespace: fitness
+spec:
+  ports:
+  - name: http-svc
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: auth
+  type: ClusterIP
+status:
+  loadBalancer: {}

@@ -1,0 +1,82 @@
+info:
+  app:
+    name: auth
+    version: 1.0.0-SNAPSHOT
+    description:  auth
+
+endpoints:
+  shutdown:
+    enabled: true
+    sensitive: false
+
+management:
+  security:
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: metrics,health,prometheus
+spring:
+  profiles:
+    active: prod
+---
+spring:
+  profiles: prod
+  pid:
+    file: /auth/run/auth.pid
+membership:
+  server: membership
+  portal: 8080
+redis:
+  server: auth-redis
+  port: 6379
+  password: 1q2w3e4r5t
+rest:
+  timeout:
+    connection: 2000
+    read: 2000
+  server: member
+  port: 8080
+logging:
+  config: classpath:logback-prod.xml
+log:
+  file:
+    path: "/auth/logs"
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+---
+spring:
+  profiles: local
+  pid:
+    file: E://dev/work/auth/run/auth.pid
+redis:
+  server: 192.168.0.101
+  port: 31379
+  password: 1q2w3e4r5t
+membership:
+  server: localhost
+  portal: 8084
+rest:
+  timeout:
+    connection: 2000
+    read: 2000
+  server: localhost
+  port: 8084
+logging:
+  config: classpath:logback-local.xml
+log:
+  file:
+    path: "E://dev/work/auth/logs"
+server:
+  port: 8083
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+ 
